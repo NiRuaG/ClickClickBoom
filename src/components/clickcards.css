@@ -1,0 +1,30 @@
+button.clickCard {
+  width: 12rem;
+  height: 12rem;
+  margin-top: 1rem;
+  padding: 0.2rem;
+  background-image: linear-gradient(45deg, lightcoral 25%,#2f6cb7 80%);
+  outline: none;
+
+  border: 0.4em #2f6cb7;
+  border-style: ridge;
+  border-radius: 0.8rem;
+}
+
+button.clickCard:hover {
+  border-width: 0.2rem;
+  border-style: outset;
+  border-color: lightcoral;
+}
+
+button.clickCard img {
+  height: 90%;
+  width: 90%;
+
+  object-fit: contain;
+}
+
+button.clickCard:hover img {
+  height: 100%;
+  width: 100%;
+}
