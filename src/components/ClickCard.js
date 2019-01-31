@@ -3,9 +3,14 @@ import React from 'react';
 import './clickcards.css'
 
 
-function ClickCard({ alt, src, ...props }) {
+function ClickCard({ alt, src, display, ...props }) {
   return (
-    <button className="clickCard" {...props}>
+    <button
+      className="clickCard"
+      style={{
+        display: !display && 'none'
+      }}
+      {...props}>
       <img alt={alt} src={src}/>
     </button>
   );
