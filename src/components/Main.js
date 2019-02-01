@@ -34,13 +34,16 @@ class Main extends Component {
 
     if (this.state.clickedSet.has(keyNum)) {
       this.setState({ 
-        title: `You already captured ${nameMap[keyNum]}`,
-        duplicate: keyNum
+        duplicate: keyNum,
+        title: `You already clicked ${nameMap[keyNum]}`
       })
     }
 
     else {
-      this.setState({ selected: keyNum });
+      this.setState({
+        selected: keyNum,
+        title: `You clicked ${nameMap[keyNum]}`
+      });
     }
 
   }
@@ -136,7 +139,7 @@ class Main extends Component {
             Best Score: <span id="bestScore">{this.state.bestScore}</span>
           </p>
           <p>
-            You caught <span id="curScore">{this.state.curScore}</span>{` of ${this.state.maxScore}`}
+            You clicked <span id="curScore">{this.state.curScore}</span>{` of ${this.state.maxScore}`}
           </p>
         </header>
 
