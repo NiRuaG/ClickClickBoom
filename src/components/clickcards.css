@@ -32,7 +32,7 @@ button.clickCard:hover:not(.spin) img {
   filter: 
     drop-shadow(0.5rem 0.5rem rgba(0,0,0,0.5));
 
-  transform: scale(1.19) /* different decimals have better/worse 'blurring' */
+  transform: scale(1.21) /* different decimals have better/worse 'blurring' */
 }
 
 
@@ -85,4 +85,4 @@ button.clickCard.danger img {
   100% {
     filter: invert(100%)
   }
-}
+}`
