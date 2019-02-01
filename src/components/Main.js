@@ -3,10 +3,10 @@ import React, { Component } from 'react';
 import ClickCard from './ClickCard';
 
 import nameMap from './../names';
-
 import shuffle from './../util/shuffle';
 
 import './main.css'
+
 
 class Main extends Component {
   state = {
@@ -20,42 +20,77 @@ class Main extends Component {
     clickedSet: new Set()
   }
 
+  componentWillMount(){
+    this.shuffleTiles();
+  }
 
-  handleClick(keyNum) {
+  handleClick({ target }, keyNum) {
+    this.setState({ locked: true });
 
     if (this.state.clickedSet.has(keyNum)) {
-      this.setState({
-        clickedSet: new Set(),
-        curScore: 0
-      });
+      target.classList.add('danger');
     }
 
     else {
-
-      // Add this new keyNum to Set
-      const clickedSet = new Set(this.state.clickedSet);
-      clickedSet.add(keyNum);
-
-      // Shuffle the tiles
-      const numbers = [...this.state.numbers];
-      shuffle(numbers);
-
-      // Score updates
-      let { curScore, bestScore } = this.state;
-      if (++curScore > bestScore) {
-        bestScore = curScore;
-      }
-
-
-      this.setState({
-        curScore,
-        bestScore,
-        numbers,
-        clickedSet
-      });
-
+      target.classList.add('spin');
     }
-    
+
+  }
+
+  shuffleTiles() {
+    // Shuffle the tiles
+    const numbers = [...this.state.numbers];
+    shuffle(numbers);
+    this.setState({ numbers });
+  }
+
+  updateSet(keyNum) {
+    // Add this new keyNum to Set
+    const clickedSet = new Set(this.state.clickedSet);
+    clickedSet.add(keyNum);
+
+    // Score updates
+    let { curScore, bestScore } = this.state;
+    if (++curScore > bestScore) {
+      bestScore = curScore;
+    }
+
+
+    this.setState({
+      curScore,
+      bestScore,
+      clickedSet
+    });
+
+    this.shuffleTiles();
+  }
+
+  handleAnimEnd({target, animationName}, keyNum) {
+    if (animationName === 'zoom') return;
+
+    this.setState({ locked: false });
+
+    if (target.classList.contains(animationName)){
+      target.classList.remove(animationName);
+    }
+    else {
+      target.closest(`.${animationName}`).classList.remove(`${animationName}`);
+    }
+
+    switch(animationName){
+      case 'spin':
+        this.updateSet(keyNum)
+        break;
+      case 'danger':
+        this.setState({
+          clickedSet: new Set(),
+          curScore: 0
+        });
+        this.shuffleTiles();
+        break;
+      default:;
+    }
+
   }
 
   render() {
@@ -70,22 +105,33 @@ class Main extends Component {
           alt={name}
           display={i < 12} //! only show first 12
           src={`img/${String(num).padStart(3,'0')} ${name}.png`}
-          onClick={() => this.handleClick(num)}
+          onClick={(event) => this.handleClick(event, num)}
+          onAnimationEnd={(event) => this.handleAnimEnd(event, num)}
           />
       )
     });
 
 
     return (
-      <>
+      <div style={{
+        userSelect: 'none',
+        MozUserSelect: 'none'
+      }}>
         <header className="App-header">
+          <h3>Gotta Catch em All, But Once and Once Only</h3>
           <p>
-            Current Score: <span id="curScore">{this.state.curScore}</span>{` of ${this.state.maxScore}`}
+            Best Score: <span id="bestScore">{this.state.bestScore}</span>
           </p>
           <p>
-            Best Score: <span id="bestScore">{this.state.bestScore}</span>{` of ${this.state.maxScore}`}
+            You caught <span id="curScore">{this.state.curScore}</span>{` of ${this.state.maxScore}`}
           </p>
         </header>
+
+        {/* <button style={{
+          position: 'absolute'
+        }}>
+
+        </button> */}
 
         <main style={{
           maxWidth: '53rem',
@@ -97,7 +143,7 @@ class Main extends Component {
         }}>
           {clickcards}
         </main>
-      </>
+      </div>
     )
   }
 }
