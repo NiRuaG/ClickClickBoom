@@ -13,6 +13,10 @@ class Main extends Component {
     maxScore: nameMap.length-1, //! '-1' because 0-index name mapping
 
     locked: false,
+    selected: NaN,
+    duplicate: NaN,
+
+    title: "Gotta Click em All, but Once and Once Only",
 
     curScore: 0,
     bestScore: 0,
@@ -24,15 +28,19 @@ class Main extends Component {
     this.shuffleTiles();
   }
 
-  handleClick({ target }, keyNum) {
+  handleClick(keyNum) {
+
     this.setState({ locked: true });
 
     if (this.state.clickedSet.has(keyNum)) {
-      target.classList.add('danger');
+      this.setState({ 
+        title: `You already captured ${nameMap[keyNum]}`,
+        duplicate: keyNum
+      })
     }
 
     else {
-      target.classList.add('spin');
+      this.setState({ selected: keyNum });
     }
 
   }
@@ -65,30 +73,31 @@ class Main extends Component {
     this.shuffleTiles();
   }
 
-  handleAnimEnd({target, animationName}, keyNum) {
+  handleAnimEnd({ animationName }, keyNum) {
     if (animationName === 'zoom') return;
 
     this.setState({ locked: false });
 
-    if (target.classList.contains(animationName)){
-      target.classList.remove(animationName);
-    }
-    else {
-      target.closest(`.${animationName}`).classList.remove(`${animationName}`);
-    }
 
-    switch(animationName){
+    switch(animationName) {
+
       case 'spin':
+        this.setState({ selected: NaN });
         this.updateSet(keyNum)
         break;
+
       case 'danger':
         this.setState({
           clickedSet: new Set(),
-          curScore: 0
+          curScore: 0,
+          duplicate: NaN,
+          title: "Gotta Click em All, but Once and Once Only"
         });
         this.shuffleTiles();
         break;
+
       default:;
+
     }
 
   }
@@ -103,9 +112,12 @@ class Main extends Component {
         <ClickCard
           key={num}
           alt={name}
+          doSpin={this.state.selected === num}
+          doDanger={this.state.duplicate === num}
+
           display={i < 12} //! only show first 12
           src={`img/${String(num).padStart(3,'0')} ${name}.png`}
-          onClick={(event) => this.handleClick(event, num)}
+          onClick={() => this.handleClick(num)}
           onAnimationEnd={(event) => this.handleAnimEnd(event, num)}
           />
       )
@@ -114,11 +126,12 @@ class Main extends Component {
 
     return (
       <div style={{
-        userSelect: 'none',
-        MozUserSelect: 'none'
+         userSelect: 'none',
+      MozUserSelect: 'none',
       }}>
+      
         <header className="App-header">
-          <h3>Gotta Catch em All, But Once and Once Only</h3>
+          <h3>{this.state.title}</h3>
           <p>
             Best Score: <span id="bestScore">{this.state.bestScore}</span>
           </p>
@@ -127,22 +140,19 @@ class Main extends Component {
           </p>
         </header>
 
-        {/* <button style={{
-          position: 'absolute'
-        }}>
+          <main style={{
+            maxWidth: '53rem',
+            margin: '0 auto',
+            display: 'flex',
+            flexFlow: 'row wrap',
+            justifyContent: 'space-around',
+            
 
-        </button> */}
+            pointerEvents: this.state.locked && 'none'
+          }}>
+            {clickcards}
+          </main>
 
-        <main style={{
-          maxWidth: '53rem',
-          margin: '0 auto',
-          display: 'flex',
-          flexFlow: 'row wrap',
-          justifyContent: 'space-around',
-          pointerEvents: this.state.locked && 'none'
-        }}>
-          {clickcards}
-        </main>
       </div>
     )
   }

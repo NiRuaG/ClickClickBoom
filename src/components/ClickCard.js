@@ -3,15 +3,25 @@ import React from 'react';
 import './clickcards.css'
 
 
-function ClickCard({ alt, src, display, onAnimationEnd,...props }) {
+function ClickCard({ alt, src, display, doSpin, doDanger, onAnimationEnd,...props }) {
+  const className=[
+    "clickCard",
+    doSpin ? 'spin' : '',
+    doDanger ? 'danger' :''
+  ];
   return (
     <button
-      className={"clickCard"}
+
+      className={className.join(' ')}
+
       style={{
-        display: !display && 'none'
+        display: display ? null: 'none'
       }}
+
       {...props}>
+
       <img alt={alt} src={src} onAnimationEnd={onAnimationEnd}/>
+
     </button>
   );
 }
