@@ -11,17 +11,7 @@ import './main.css'
 
 
 class Main extends Component {
-  state = {
-    maxScore: nameMap.length-1, //! '-1' because 0-index name mapping
-
-    locked: false,
-    selected: NaN,
-    duplicate: NaN,
-
-    title: "Gotta Click em All, but Once and Once Only",
-
-    curScore: 0,
-    bestScore: 0,
+  state = { ...Main.stateReset, //* primitives
     numbers: [...Array(nameMap.length).keys()].splice(1), //! '..splice(1)' because 0-index name mapping
     clickedSet: new Set()
   }
@@ -30,9 +20,16 @@ class Main extends Component {
     this.shuffleTiles();
   }
 
-  handleClick(keyNum) {
+  shuffleTiles() {
+    // Shuffle the tiles
+    const numbers = [...this.state.numbers];
+    shuffle(numbers);
+    this.setState({ numbers });
+  }
 
-    this.setState({ locked: true });
+  handleClick(keyNum) {
+    if (this.state.clickLocked) return;
+    this.setState({ clickLocked: true });
 
     if (this.state.clickedSet.has(keyNum)) {
       this.setState({ 
@@ -50,14 +47,8 @@ class Main extends Component {
 
   }
 
-  shuffleTiles() {
-    // Shuffle the tiles
-    const numbers = [...this.state.numbers];
-    shuffle(numbers);
-    this.setState({ numbers });
-  }
-
-  updateSet(keyNum) {
+  
+  updateSetAndScore(keyNum) {
     // Add this new keyNum to Set
     const clickedSet = new Set(this.state.clickedSet);
     clickedSet.add(keyNum);
@@ -78,26 +69,25 @@ class Main extends Component {
     this.shuffleTiles();
   }
 
+
   handleAnimEnd({ animationName }, keyNum) {
     if (animationName === 'zoom') return;
 
-    this.setState({ locked: false });
+    this.setState({ clickLocked: false });
 
 
     switch(animationName) {
 
-      case 'spin':
+      case 'spin': // after spin animation, shuffle the board
         this.setState({ selected: NaN });
-        this.updateSet(keyNum)
+        this.updateSetAndScore(keyNum);
         break;
 
-      case 'danger':
-        this.setState({
+      case 'danger': // after danger animation, reset the game
+        this.setState({...Main.stateReset,
           clickedSet: new Set(),
-          curScore: 0,
-          duplicate: NaN,
-          title: "Gotta Click em All, but Once and Once Only"
         });
+
         this.shuffleTiles();
         break;
 
@@ -116,15 +106,18 @@ class Main extends Component {
       return (
         <ClickCard
           key={num}
+
           alt={name}
-          doSpin={this.state.selected === num}
-          doDanger={this.state.duplicate === num}
+          src={`img/${String(num).padStart(3,'0')} ${name}.png`}
 
           display={i < 12} //! only show first 12
-          src={`img/${String(num).padStart(3,'0')} ${name}.png`}
+          
           onClick={() => this.handleClick(num)}
+
+          doDanger={this.state.duplicate === num}
+          doSpin={this.state.selected === num}
           onAnimationEnd={(event) => this.handleAnimEnd(event, num)}
-          />
+        />
       )
     });
 
@@ -168,7 +161,7 @@ class Main extends Component {
             justifyContent: 'space-around',
             
 
-            pointerEvents: this.state.locked && 'none'
+            pointerEvents: this.state.clickLocked && 'none'
           }}>
             {clickcards}
           </main>
@@ -176,6 +169,17 @@ class Main extends Component {
       </div>
     )
   }
+}
+
+//* primitive properties on reset
+Main.stateReset = {
+  maxScore: nameMap.length-1, //! '-1' because 0-index name mapping
+  clickLocked: false,
+  selected: NaN,
+  duplicate: NaN,
+  title: "Gotta Click 'em All Just Once",
+  curScore: 0,
+  bestScore: 0,
 }
 
 
