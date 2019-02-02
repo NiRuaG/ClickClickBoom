@@ -4,7 +4,18 @@
 
 .App-logo {
   animation: App-logo-spin infinite 3s ease-in-out alternate-reverse;
-  height: 4vmin;
+  height: 1.5rem;
+  position: absolute;
+  top: 2.45rem;
+  right: 2.15rem;
+}
+
+.fa-github {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  height: 2.5rem;
+  color: #61dafb;
 }
 
 .App-header {
@@ -15,10 +26,7 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
-}
-
-.App-link {
-  color: #61dafb;
+  position: relative;
 }
 
 @keyframes App-logo-spin {
