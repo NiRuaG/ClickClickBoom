@@ -23,13 +23,20 @@ class Main extends Component {
   }
 
   shuffleTiles() {
-    // start with the general array of [1,2,3,4,...]
+    // start with the base array of [1,2,3,4,...]
     const numbers = [...Array(nameMap.length).keys()].splice(1); //! '..splice(1)' because 0-index name mapping
 
+    if (!this.state.unclicked.length) { // player has gotten MAX score, just shuffle the base array
+      shuffle(numbers);
+    }
+    else { // guarantee that a tile in the lineup will have not been clicked already
+
     // pick a random 'mon-number from those that have NOT been clicked
-    const guaranteedNotClicked = this.state.unclicked [
+      const guaranteedNotClicked = this.state.unclicked[
       Math.floor(Math.random() * this.state.unclicked.length)
     ];
+      console.log("guaranteedNotClicked:\n", guaranteedNotClicked);
+
 
     // take that un-clicked number OUT of the general array
     numbers.splice(guaranteedNotClicked - 1, 1); //! -1 because 0-index mapping
@@ -38,10 +45,13 @@ class Main extends Component {
     shuffle(numbers);
 
     // find a random spot in the lineup (first 12 spots) to put the unclicked 'mon-number back in
-    const randomSpotInLineup = Math.floor(Math.random()*12);
+      const randomSpotInLineup = Math.floor(Math.random() * 12);
+      console.log("randomSpotInLineup:\n", randomSpotInLineup);
 
     // insert the un-clicked 'mon-number back into numbers array (somewhere within the first 12 lineup)
     numbers.splice(randomSpotInLineup, 0, guaranteedNotClicked);
+
+    }
 
     this.setState({ numbers });
   }
@@ -89,9 +99,7 @@ class Main extends Component {
       bestScore,
       clickedSet,
       unclicked
-    });
-
-    this.shuffleTiles();
+    }, () => { this.shuffleTiles()}); // shuffleTiles function also affects unclicked array, so execute it in the callback after the setState here, to make sure unclicked array is in correct state
   }
 
 
