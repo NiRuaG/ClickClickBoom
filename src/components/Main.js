@@ -5,16 +5,17 @@ import ClickCard from './ClickCard';
 import nameMap from './../names';
 import shuffle from './../util/shuffle';
 
-import reactLogo from './../reactLogo.svg';
 
 import './main.css'
+import Header from './Header';
 
 
 class Main extends Component {
   state = { ...Main.stateReset, //* primitives
     bestScore: 0,
-    numbers: [...Array(nameMap.length).keys()].splice(1), //! '..splice(1)' because 0-index name mapping
-    clickedSet: new Set()
+    numbers: [...Array(nameMap.length).keys()].splice(1), //! '..splice(1)' because 0-index name mapping 
+    clickedSet: new Set(),
+    unclicked: [...Array(nameMap.length).keys()].splice(1) //% to assure there will always be a new (not previously clicked) 'mon in the lineup 
   }
 
   componentWillMount(){
@@ -22,9 +23,26 @@ class Main extends Component {
   }
 
   shuffleTiles() {
-    // Shuffle the tiles
-    const numbers = [...this.state.numbers];
+    // start with the general array of [1,2,3,4,...]
+    const numbers = [...Array(nameMap.length).keys()].splice(1); //! '..splice(1)' because 0-index name mapping
+
+    // pick a random 'mon-number from those that have NOT been clicked
+    const guaranteedNotClicked = this.state.unclicked [
+      Math.floor(Math.random() * this.state.unclicked.length)
+    ];
+
+    // take that un-clicked number OUT of the general array
+    numbers.splice(guaranteedNotClicked - 1, 1); //! -1 because 0-index mapping
+
+    // shuffle the rest of array (that is less 1, without the un-clicked)
     shuffle(numbers);
+
+    // find a random spot in the lineup (first 12 spots) to put the unclicked 'mon-number back in
+    const randomSpotInLineup = Math.floor(Math.random()*12);
+
+    // insert the un-clicked 'mon-number back into numbers array (somewhere within the first 12 lineup)
+    numbers.splice(randomSpotInLineup, 0, guaranteedNotClicked);
+
     this.setState({ numbers });
   }
 
@@ -54,6 +72,10 @@ class Main extends Component {
     const clickedSet = new Set(this.state.clickedSet);
     clickedSet.add(keyNum);
 
+    // Remove this keyNum from array of unclicked
+    const unclicked = [...this.state.unclicked];
+    unclicked.splice(keyNum-1, 1); //! keyNum-1 because 0-index name mapping
+
     // Score updates
     let { curScore, bestScore } = this.state;
     if (++curScore > bestScore) {
@@ -64,7 +86,8 @@ class Main extends Component {
     this.setState({
       curScore,
       bestScore,
-      clickedSet
+      clickedSet,
+      unclicked
     });
 
     this.shuffleTiles();
@@ -87,6 +110,7 @@ class Main extends Component {
       case 'danger': // after danger animation, reset the game
         this.setState({...Main.stateReset,
           clickedSet: new Set(),
+          unclicked: [...Array(nameMap.length).keys()].splice(1)
         });
 
         this.shuffleTiles();
