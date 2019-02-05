@@ -74,7 +74,8 @@ class Main extends Component {
 
     // Remove this keyNum from array of unclicked
     const unclicked = [...this.state.unclicked];
-    unclicked.splice(keyNum-1, 1); //! keyNum-1 because 0-index name mapping
+    const idx = unclicked.findIndex(v => v===keyNum); //? could be a binary search instead (unclicked stays sorted)
+    unclicked.splice(idx, 1); 
 
     // Score updates
     let { curScore, bestScore } = this.state;
