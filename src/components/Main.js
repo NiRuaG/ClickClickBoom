@@ -12,6 +12,7 @@ import './main.css'
 
 class Main extends Component {
   state = { ...Main.stateReset, //* primitives
+    bestScore: 0,
     numbers: [...Array(nameMap.length).keys()].splice(1), //! '..splice(1)' because 0-index name mapping
     clickedSet: new Set()
   }
@@ -179,7 +180,7 @@ Main.stateReset = {
   duplicate: NaN,
   title: "Gotta Click 'em All Just Once",
   curScore: 0,
-  bestScore: 0,
+  
 }
 
 
