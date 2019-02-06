@@ -31,25 +31,22 @@ class Main extends Component {
     }
     else { // guarantee that a tile in the lineup will have not been clicked already
 
-    // pick a random 'mon-number from those that have NOT been clicked
+      // pick a random 'mon-number from those that have NOT been clicked
       const guaranteedNotClicked = this.state.unclicked[
-      Math.floor(Math.random() * this.state.unclicked.length)
-    ];
-      console.log("guaranteedNotClicked:\n", guaranteedNotClicked);
+        Math.floor(Math.random() * this.state.unclicked.length)
+      ];
 
+      // take that un-clicked number OUT of the general array
+      numbers.splice(guaranteedNotClicked - 1, 1); //! -1 because 0-index mapping
 
-    // take that un-clicked number OUT of the general array
-    numbers.splice(guaranteedNotClicked - 1, 1); //! -1 because 0-index mapping
+      // shuffle the rest of array (that is less 1, without the un-clicked)
+      shuffle(numbers);
 
-    // shuffle the rest of array (that is less 1, without the un-clicked)
-    shuffle(numbers);
-
-    // find a random spot in the lineup (first 12 spots) to put the unclicked 'mon-number back in
+      // find a random spot in the lineup (first 12 spots) to put the unclicked 'mon-number back in
       const randomSpotInLineup = Math.floor(Math.random() * 12);
-      console.log("randomSpotInLineup:\n", randomSpotInLineup);
 
-    // insert the un-clicked 'mon-number back into numbers array (somewhere within the first 12 lineup)
-    numbers.splice(randomSpotInLineup, 0, guaranteedNotClicked);
+      // insert the un-clicked 'mon-number back into numbers array (somewhere within the first 12 lineup)
+      numbers.splice(randomSpotInLineup, 0, guaranteedNotClicked);
 
     }
 
