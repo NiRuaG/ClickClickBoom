@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/clickclickboom/precache-manifest.9d39a9d59ce4d9329133afe2f5ab4ce5.js"
+  "/ClickClickBoom/precache-manifest.83c90f8d0c9c8e48c2dbe98b9a7b6ae5.js"
 );
 
 workbox.clientsClaim();
@@ -28,7 +28,7 @@ self.__precacheManifest = [].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerNavigationRoute("/clickclickboom/index.html", {
+workbox.routing.registerNavigationRoute("/ClickClickBoom/index.html", {
   
   blacklist: [/^\/_/,/\/[^\/]+\.[^\/]+$/],
 });
